@@ -36,6 +36,17 @@ static int cmd_q(char *args) {
   return -1;
 }
 
+static int cmd_si(char *args) {
+  uint64_t num = 1;
+  if (args!=NULL)
+       num = strtoull(args,NULL,10 );
+   cpu_exec(num); 
+   return 0;
+}
+
+//static int cmd_infor(char *args) {
+ // printf()
+
 static int cmd_help(char *args);
 
 static struct {
@@ -46,6 +57,8 @@ static struct {
   { "help", "Display informations about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
+  { "si", "Step one instruction exactly",cmd_si },
+ // { "info r", "List of integer registers and their contents",cmd_infor},
 
   /* TODO: Add more commands */
 
