@@ -50,7 +50,7 @@ static int cmd_infor(char *args) {
      {
         for(i=0;i<8;i++)
            {
-             printf("%d, %d",i,cpu.gpr[i]._32);
+             printf("%d, %#010x",i,cpu.gpr[i]._32);
            }
         return 0;
       }
