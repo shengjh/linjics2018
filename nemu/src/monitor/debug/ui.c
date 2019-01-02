@@ -44,8 +44,19 @@ static int cmd_si(char *args) {
    return 0;
 }
 
-//static int cmd_infor(char *args) {
- // printf()
+static int cmd_infor(char *args) {
+  int i;
+  if ((args[0] == 'r')||(args[0] == 'R'))
+     {
+        for(i=0;i<8;i++)
+           {
+             printf("%d,%d",i,cpu.gpr[i]._32);
+           }
+        return 0;
+      }
+  else
+    return 0;
+}
 
 static int cmd_help(char *args);
 
@@ -58,7 +69,7 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
   { "si", "Step one instruction exactly",cmd_si },
- // { "info r", "List of integer registers and their contents",cmd_infor},
+  { "info", "List of integer registers and their contents",cmd_infor},
 
   /* TODO: Add more commands */
 
