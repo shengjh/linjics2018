@@ -44,7 +44,7 @@ static int cmd_si(char *args) {
    return 0;
 }
 
-static int cmd_infor(char *args) {
+static int cmd_info(char *args) {
   int i;
   if ((args[0] == 'r')||(args[0] == 'R'))
      {
@@ -58,6 +58,19 @@ static int cmd_infor(char *args) {
     return 0;
 }
 
+static int cmd_x(char *args) {
+  uint32_t a,b,i;
+  a = strtoul(&args[0],NULL,10);
+  b = strtoul(&args[1],NULL,10);
+  for (i=0;i<a;i++)
+    {  
+        printf("%#08x\n",paddr_read(b,4));
+        b=b+4;
+    }
+  return 0;
+}
+       
+
 static int cmd_help(char *args);
 
 static struct {
@@ -69,8 +82,8 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
   { "si", "Step one instruction exactly",cmd_si },
-  { "info", "List of integer registers and their contents",cmd_infor},
-
+  { "info", "List of integer registers and their contents",cmd_info},
+  { "x", "Examine memory: x/FMT ADDRESS",cmd_x},
   /* TODO: Add more commands */
 
 };
