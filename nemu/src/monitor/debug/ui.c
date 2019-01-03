@@ -70,6 +70,12 @@ static int cmd_x(char *args) {
   return 0;
 }
        
+static int cmd_p(char *args){
+  bool  success1 = true;
+  bool* success  = &success1;
+  expr(args,success);
+  return 0;
+}
 
 static int cmd_help(char *args);
 
@@ -84,6 +90,7 @@ static struct {
   { "si", "Step one instruction exactly",cmd_si },
   { "info", "List of integer registers and their contents",cmd_info},
   { "x", "Examine memory: x/FMT ADDRESS",cmd_x},
+  { "p", "expression evaluation",cmd_p},
   /* TODO: Add more commands */
 
 };
