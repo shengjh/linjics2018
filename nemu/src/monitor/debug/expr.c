@@ -7,7 +7,7 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ
+  TK_NOTYPE = 256, TK_EQ,num 
 
   /* TODO: Add more token types */
 
@@ -23,7 +23,13 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
+  {"[0-9]+",num},       // decimal integer
   {"\\+", '+'},         // plus
+  {"\\-", '-'},         // sub
+  {"\\*", '*'},         // multiply
+  {"\\/", '/'},         // divide
+  {"\\(", '('},         // left bracket
+  {"\\)", ')'},         // right bracket
   {"==", TK_EQ}         // equal
 };
 
@@ -80,7 +86,15 @@ static bool make_token(char *e) {
          */
 
         switch (rules[i].token_type) {
-          default: TODO();
+          case 256 : break;
+          case '+' : { tokens[nr_token].type = '+';nr_token++;}break;
+          case '-' : { tokens[nr_token].type = '-';nr_token++;}break;
+          case '*' : { tokens[nr_token].type = '*';nr_token++;}break;
+          case '/' : { tokens[nr_token].type = '/';nr_token++;}break;
+          case '(' : { tokens[nr_token].type = '(';nr_token++;}break;
+          case ')' : { tokens[nr_token].type = ')';nr_token++;}break;
+          case 258 : { tokens[nr_token].type = 258; stpcpy(tokens[nr_token].str,rules[i].regex);nr_token++;}break;
+          default:  break;
         }
 
         break;
@@ -97,13 +111,35 @@ static bool make_token(char *e) {
 }
 
 uint32_t expr(char *e, bool *success) {
+  int i;
   if (!make_token(e)) {
     *success = false;
     return 0;
   }
-
+  else 
+    { for (i=0;i<nr_token;i++)
+      printf("%d %s\n",tokens[i].type,tokens[i].str);}
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
+
+
+
 
   return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
