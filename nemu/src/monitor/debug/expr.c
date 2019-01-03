@@ -93,7 +93,7 @@ static bool make_token(char *e) {
           case '/' : { tokens[nr_token].type = '/';nr_token++;}break;
           case '(' : { tokens[nr_token].type = '(';nr_token++;}break;
           case ')' : { tokens[nr_token].type = ')';nr_token++;}break;
-          case 258 : { tokens[nr_token].type = 258; stpcpy(tokens[nr_token].str,substr_start);nr_token++;}break;
+          case 258 : { tokens[nr_token].type = 258; strncpy(tokens[nr_token].str,substr_start,substr_len);nr_token++;}break;
           default:  break;
         }
 
