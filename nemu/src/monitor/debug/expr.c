@@ -119,9 +119,9 @@ int lbr = 0;
        {
 	  for(i=p;i<=q;i++)
 	    {
-		if(tokens[p].type==TK_lbr)
+		if(tokens[i].type==TK_lbr)
                     lbr++;
-  		if(tokens[p].type==TK_rbr)
+  		if(tokens[i].type==TK_rbr)
                     lbr--;
 		if(lbr < 0) 
 		    return false;
