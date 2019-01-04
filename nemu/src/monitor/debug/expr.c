@@ -124,7 +124,7 @@ int lbr = 0;
   		if(tokens[i].type==TK_rbr)
                     lbr--;
 		if(lbr < 0) 
-		    return false;
+		    { panic("bad expressioon");assert(0);}
         	if((lbr==0)&&(i!=q))
           	    return false;
 		    
@@ -144,7 +144,7 @@ uint32_t eval(int p, int q) {
   int lbr1=0,flag=0;
   if (p > q) {
 
-    printf ("%d %d",p,q);
+    //printf ("%d %d",p,q);
     assert(0);
      
     /* Bad expression */
