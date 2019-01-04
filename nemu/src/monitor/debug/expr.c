@@ -1,5 +1,5 @@
 #include "nemu.h"
-
+#include "stdlib.h"
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
@@ -7,7 +7,7 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ,num 
+  TK_NOTYPE = 256, TK_EQ,TK_plus,TK_sub,num,TK_mul,TK_div,TK_lbr,TK_rbr
 
   /* TODO: Add more token types */
 
@@ -23,13 +23,13 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
-  {"[0-9]+",num},       // decimal integer
-  {"\\+", '+'},         // plus
-  {"\\-", '-'},         // sub
-  {"\\*", '*'},         // multiply
-  {"\\/", '/'},         // divide
-  {"\\(", '('},         // left bracket
-  {"\\)", ')'},         // right bracket
+  {"[0-9]+", num},       // decimal integer
+  {"\\+", TK_plus},         // plus
+  {"\\-", TK_sub},         // sub
+  {"\\*", TK_mul},         // multiply
+  {"\\/", TK_div},         // divide
+  {"\\(", TK_lbr},         // left bracket
+  {"\\)", TK_rbr},         // right bracket
   {"==", TK_EQ}         // equal
 };
 
@@ -87,13 +87,13 @@ static bool make_token(char *e) {
 
         switch (rules[i].token_type) {
           case 256 : break;
-          case '+' : { tokens[nr_token].type = '+';nr_token++;}break;
-          case '-' : { tokens[nr_token].type = '-';nr_token++;}break;
-          case '*' : { tokens[nr_token].type = '*';nr_token++;}break;
-          case '/' : { tokens[nr_token].type = '/';nr_token++;}break;
-          case '(' : { tokens[nr_token].type = '(';nr_token++;}break;
-          case ')' : { tokens[nr_token].type = ')';nr_token++;}break;
-          case 258 : { tokens[nr_token].type = 258; strncpy(tokens[nr_token].str,substr_start,substr_len);nr_token++;}break;
+          case TK_plus : { tokens[nr_token].type = TK_plus;nr_token++;}break;
+          case TK_sub : { tokens[nr_token].type = TK_sub;nr_token++;}break;
+          case TK_mul : { tokens[nr_token].type = TK_mul;nr_token++;}break;
+          case TK_div : { tokens[nr_token].type = TK_div;nr_token++;}break;
+          case TK_lbr : { tokens[nr_token].type = TK_lbr;nr_token++;}break;
+          case TK_rbr : { tokens[nr_token].type = TK_rbr;nr_token++;}break;
+          case 260 : { tokens[nr_token].type = 260; strncpy(tokens[nr_token].str,substr_start,substr_len);nr_token++;}break;
           default:  break;
         }
 
@@ -110,6 +110,98 @@ static bool make_token(char *e) {
   return true;
 }
 
+int lbr = 0;
+ bool check_parentheses(int p,int q){
+
+   int i;
+   
+   if((tokens[p].type==TK_lbr)&&(tokens[q].type==TK_rbr))
+       {
+	  for(i=p;i<=q;i++)
+	    {
+		if(tokens[p].type==TK_lbr)
+                    lbr++;
+  		if(tokens[p].type==TK_rbr)
+                    lbr--;
+		if(lbr < 0) 
+		    return false;
+        	if((lbr==0)&&(i!=q))
+          	    return false;
+		    
+	    }
+         if(lbr==0)
+    	     return true;
+         else
+     	     return false;
+         
+       }
+   else 
+	return false;
+}
+
+
+uint32_t eval(int p, int q) {
+  if (p > q) {
+
+    assert(0);
+     
+    /* Bad expression */
+  }
+  else if (p == q) {
+    /* Single token.
+     * For now this token should be a number.
+     * Return the value of the number.
+     */
+    return atoi(tokens[p].str);
+     
+  }
+  else if (check_parentheses(p, q) == true) {
+    /* The expression is surrounded by a matched pair of parentheses.
+     * If that is the case, just throw away the parentheses.
+     */
+    
+    return eval(p + 1, q - 1);
+  }
+  else {
+
+    int op=0,i,op_type;
+    uint32_t val1;
+    uint32_t val2;
+
+    if(lbr!=0)  
+	 { 
+	     panic("bad expression"); assert(0); 
+	 }  
+
+    else
+         {
+	     for(i=p;i<=q;i++) //TK_plus,TK_sub,num,TK_mul,TK_div,TK_lbr,TK_rbr
+		{
+		    if(tokens[i].type==TK_plus||tokens[i].type==TK_sub)
+			op=i;
+		    else 
+			{ if(tokens[i].type==TK_mul||tokens[i].type==TK_div)
+			  op=i;
+			}
+		}
+	 }
+
+    val1 = eval(p, op - 1);
+    val2 = eval(op + 1, q);
+    op_type = tokens[op].type;
+    
+    switch (op_type) {
+      case TK_plus: return (val1 + val2);
+      case TK_sub: return (val1 - val2);/* ... */
+      case TK_mul: return (val1 * val2);/* ... */
+      case TK_div: return (val1 / val2);/* ... */
+      default: assert(0);
+    }
+  }
+}
+
+
+
 uint32_t expr(char *e, bool *success) {
   int i;
   if (!make_token(e)) {
@@ -120,14 +212,9 @@ uint32_t expr(char *e, bool *success) {
     { for (i=0;i<nr_token;i++)
       printf("%d %s\n",tokens[i].type,tokens[i].str);}
   /* TODO: Insert codes to evaluate the expression. */
-
-
-
-
-  return 0;
+  
+    return eval(0,nr_token-1);
 }
-
-
 
 
 
