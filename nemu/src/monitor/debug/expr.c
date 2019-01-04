@@ -184,6 +184,8 @@ uint32_t eval(int p, int q) {
                         lbr1++;
 		    if(tokens[i].type==TK_rbr)
 			lbr1--;
+                    if(lbr1<0)
+			{ panic("bad expressioon");assert(0);}
 		    if((tokens[i].type==TK_plus||tokens[i].type==TK_sub)&&(lbr1==0))
 			{ flag =1;op=i;
 			}
