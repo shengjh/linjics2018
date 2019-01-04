@@ -211,15 +211,15 @@ return 0;
 
 
 uint32_t expr(char *e, bool *success) {
-  int i;
+  //int i;
   if (!make_token(e)) {
     *success = false;
     return 0;
   }
   else 
     { 
-      for (i=0;i<nr_token;i++)
-      printf("%d %s\n",tokens[i].type,tokens[i].str);
+      //for (i=0;i<nr_token;i++)
+      //printf("%d %s\n",tokens[i].type,tokens[i].str);
 	return eval(0,nr_token-1);
      }
   /* TODO: Insert codes to evaluate the expression. */
