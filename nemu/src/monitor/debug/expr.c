@@ -145,7 +145,7 @@ uint32_t eval(int p, int q) {
   if (p > q) {
 
     printf ("%d %d",p,q);
-    assert(0);
+    //assert(0);
      
     /* Bad expression */
   }
@@ -204,6 +204,7 @@ uint32_t eval(int p, int q) {
       default: assert(0);
     }
   }
+return 0;
 }
 
 
