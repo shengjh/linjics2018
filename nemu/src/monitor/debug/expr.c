@@ -172,7 +172,8 @@ uint32_t eval(int p, int q) {
 
     if(lbr!=0)  
 	 { 
-	     panic("bad expression"); assert(0); 
+	        printf("%d",lbr);
+		panic("bad expression"); assert(0); 
 	 }  
 
     else
