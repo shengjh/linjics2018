@@ -185,7 +185,7 @@ uint32_t eval(int p, int q) {
 		    if((tokens[i].type==TK_plus||tokens[i].type==TK_sub)&&(lbr1==0))
 			{ flag =1;op=i;}
 		    else 
-			{ if((tokens[i].type==TK_mul||tokens[i].type==TK_div)&&(flag==1))
+			{ if((tokens[i].type==TK_mul||tokens[i].type==TK_div)&&(flag!=1))
 			     op=i;
 			}
 		}
