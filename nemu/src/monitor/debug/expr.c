@@ -7,7 +7,7 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ,TK_plus,TK_sub,num,TK_mul,TK_div,TK_lbr,TK_rbr
+  TK_NOTYPE = 256, TK_EQ,TK_plus,TK_sub,num,TK_mul,TK_div,TK_lbr,TK_rbr,hex,reg,TK_NEQ,TK_and,TK_LEQ,DEREF,TK_minus
 
   /* TODO: Add more token types */
 
@@ -30,7 +30,13 @@ static struct rule {
   {"\\/", TK_div},         // divide
   {"\\(", TK_lbr},         // left bracket
   {"\\)", TK_rbr},         // right bracket
-  {"==", TK_EQ}         // equal
+  {"==", TK_EQ},         // equal
+  {"!=", TK_NEQ},        // not equal   
+  {"&&", TK_and},        
+  {"0[xX][0-9a-fA-F]+", hex},
+  {"\\$[a-zA-z]{3}", reg},
+  {"<=", TK_LEQ}
+
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -86,14 +92,22 @@ static bool make_token(char *e) {
          */
 
         switch (rules[i].token_type) {
-          case 256 : break;
+          case TK_NOTYPE : break;
           case TK_plus : { tokens[nr_token].type = TK_plus;nr_token++;}break;
           case TK_sub : { tokens[nr_token].type = TK_sub;nr_token++;}break;
           case TK_mul : { tokens[nr_token].type = TK_mul;nr_token++;}break;
           case TK_div : { tokens[nr_token].type = TK_div;nr_token++;}break;
           case TK_lbr : { tokens[nr_token].type = TK_lbr;nr_token++;}break;
           case TK_rbr : { tokens[nr_token].type = TK_rbr;nr_token++;}break;
-          case 260 : { tokens[nr_token].type = 260; strncpy(tokens[nr_token].str,substr_start,substr_len);nr_token++;}break;
+          case num : { tokens[nr_token].type = num; strncpy(tokens[nr_token].str,substr_start,substr_len);nr_token++;}break;
+          case TK_EQ : { tokens[nr_token].type = TK_EQ;nr_token++;}break;
+          case TK_NEQ : { tokens[nr_token].type = TK_NEQ;nr_token++;}break;
+          case TK_and : { tokens[nr_token].type = TK_and;nr_token++;}break;
+          case TK_LEQ : { tokens[nr_token].type = TK_LEQ;nr_token++;}break;
+          case hex : { tokens[nr_token].type = hex;strncpy(tokens[nr_token].str,substr_start,substr_len);nr_token++;}break;
+          case reg : { tokens[nr_token].type = reg;strncpy(tokens[nr_token].str,substr_start,substr_len);nr_token++;}break;
+
+
           default:  break;
         }
 
@@ -154,9 +168,37 @@ uint32_t eval(int p, int q) {
      * For now this token should be a number.
      * Return the value of the number.
      */
-    return atoi(tokens[p].str);
-     
-  }
+    if(tokens[p].type==num)
+       return atoi(tokens[p].str);
+    if(tokens[p].type==hex)
+       { 
+	  uint32_t a;
+	  sscanf(tokens[p].str,"%x",&a);
+       return a;
+       }
+    if(tokens[p].type==reg)
+	{
+		if(!strcmp(tokens[p].str,"$eax"))  //eax, ecx, edx, ebx, esp, ebp, esi, edi,eip
+			return cpu.eax;     
+		if(!strcmp(tokens[p].str,"$ebx"))
+			return cpu.ebx;
+		if(!strcmp(tokens[p].str,"$ecx"))
+			return cpu.ecx;
+		if(!strcmp(tokens[p].str,"$edx"))
+			return cpu.edx;
+		if(!strcmp(tokens[p].str,"$esp"))
+			return cpu.esp;
+		if(!strcmp(tokens[p].str,"$ebp"))
+			return cpu.ebp;
+		if(!strcmp(tokens[p].str,"$esi"))
+			return cpu.esi;
+		if(!strcmp(tokens[p].str,"$edi"))
+			return cpu.edi;
+		if(!strcmp(tokens[p].str,"$eip"))
+			return cpu.eip;
+
+         }
+}
   else if (check_parentheses(p, q) == true) {
     /* The expression is surrounded by a matched pair of parentheses.
      * If that is the case, just throw away the parentheses.
@@ -164,6 +206,16 @@ uint32_t eval(int p, int q) {
     
     return eval(p + 1, q - 1);
   }
+  else if (tokens[p].type==TK_minus&&( check_parentheses(p+1, q)==true||( (q-p==1)&&(tokens[q].type==num||tokens[q].type==hex||tokens[q].type==reg) ) ) )
+		return -eval(p+1,q-1);
+  else if (tokens[p].type==DEREF&&( check_parentheses(p+1, q)==true||( (q-p==1)&&(tokens[q].type==num||tokens[q].type==hex||tokens[q].type==reg) ) ) )
+	{		
+		uint32_t z;
+		z = eval(p+1,q);
+		return vaddr_read(z,4);
+	}
+
+
   else {
 
     int op=0,i,op_type;
@@ -176,7 +228,7 @@ uint32_t eval(int p, int q) {
 		panic("bad expression"); assert(0); 
 	 }  
 
-    else
+    else 
          {
 	     for(i=p;i<=q;i++) //TK_plus,TK_sub,num,TK_mul,TK_div,TK_lbr,TK_rbr
 		{
@@ -186,13 +238,18 @@ uint32_t eval(int p, int q) {
 			lbr1--;
                     if(lbr1<0)
 			{ panic("bad expressioon");assert(0);}
-		    if((tokens[i].type==TK_plus||tokens[i].type==TK_sub)&&(lbr1==0))
-			{ flag =1;op=i;
+		    if((tokens[i].type==TK_and)&&(lbr1==0)){
+			  flag=1;op=i;}
+		    else if((tokens[i].type==TK_EQ||tokens[i].type==TK_NEQ)&&(lbr1==0)&&(flag!=1)){
+			  flag=2;op=i;}
+		    else if((tokens[i].type==TK_LEQ)&&(lbr1==0)&&((flag!=1)&&(flag!=2))){
+			  flag=3;op=i;}
+		    else if((tokens[i].type==TK_plus||tokens[i].type==TK_sub)&&(lbr1==0)&&((flag!=1)&&(flag!=2)&&(flag!=3)))
+			{ flag =4;op=i;
 			}
-		    else 
-			{ if((tokens[i].type==TK_mul||tokens[i].type==TK_div)&&(flag!=1)&&(lbr1==0))
+		    else if((tokens[i].type==TK_mul||tokens[i].type==TK_div)&&(flag!=1)&&(lbr1==0)&&((flag!=1)&&(flag!=2)&&(flag!=3)&&(flag!=4)))
 			     op=i;
-			}
+			
 		}
 	 }
 
@@ -205,6 +262,12 @@ uint32_t eval(int p, int q) {
       case TK_sub: return (val1 - val2);/* ... */
       case TK_mul: return (val1 * val2);/* ... */
       case TK_div: return (val1 / val2);/* ... */
+      case TK_EQ: return (val1 == val2);
+      case TK_NEQ: return (val1 != val2);
+      case TK_and: return (val1 && val2);
+      case TK_LEQ: return (val1 <= val2);
+
+
       default: assert(0);
     }
   }
@@ -214,7 +277,7 @@ return 0;
 
 
 uint32_t expr(char *e, bool *success) {
-  //int i;
+  int i;
   if (!make_token(e)) {
     *success = false;
     return 0;
@@ -223,10 +286,20 @@ uint32_t expr(char *e, bool *success) {
     { 
       //for (i=0;i<nr_token;i++)
       //printf("%d %s\n",tokens[i].type,tokens[i].str);
-	return eval(0,nr_token-1);
+	for (i = 0; i < nr_token; i ++) {
+
+  	if (tokens[i].type == '-' && (i == 0 || ( (tokens[i - 1].type != num)&&(tokens[i - 1].type != TK_rbr)&&(tokens[i - 1].type != hex)&&(tokens[i - 1].type != reg) ) ) ) {
+   	 tokens[i].type = TK_minus;
+ 	 }
+
+  	if (tokens[i].type == '*' && (i == 0 || ( (tokens[i - 1].type != num)&&(tokens[i - 1].type != TK_rbr)&&(tokens[i - 1].type != hex)&&(tokens[i - 1].type != reg) ) ) ) {
+   	 tokens[i].type = DEREF;
+ 	 }
+	}
+
      }
   /* TODO: Insert codes to evaluate the expression. */
-  
+  return eval(0,nr_token-1);
     
 }
 
