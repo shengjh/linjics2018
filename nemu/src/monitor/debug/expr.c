@@ -159,7 +159,7 @@ uint32_t eval(int p, int q) {
   int lbr1=0,flag=0;
   if (p > q) {
 
-    //printf ("%d %d",p,q);
+    panic ("%d %d",p,q);
     assert(0);
      
     /* Bad expression */
