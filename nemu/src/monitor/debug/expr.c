@@ -207,9 +207,9 @@ uint32_t eval(int p, int q) {
     
     return eval(p + 1, q - 1);
   }
-  else if (tokens[p].type==TK_minus&&( check_parentheses(p+1, q)==true||( (q-p==1)&&(tokens[q].type==num||tokens[q].type==hex||tokens[q].type==reg) ) ) )
+  else if (tokens[p].type==TK_minus&&( check_parentheses(p+1, q)==true||( (q-p==1)&&(tokens[p].type==num||tokens[p].type==hex||tokens[p].type==reg) ) ) )
 		return -eval(p+1,q-1);
-  else if (tokens[p].type==DEREF&&( check_parentheses(p+1, q)==true||( (q-p==1)&&(tokens[q].type==num||tokens[q].type==hex||tokens[q].type==reg) ) ) )
+  else if (tokens[p].type==DEREF&&( check_parentheses(p+1, q)==true||( (q-p==1)&&(tokens[p].type==num||tokens[p].type==hex||tokens[p].type==reg) ) ) )
 	{		
 		uint32_t z;
 		z = eval(p+1,q);
