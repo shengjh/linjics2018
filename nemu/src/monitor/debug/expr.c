@@ -309,7 +309,7 @@ uint32_t expr(char *e, bool *success) {
 
 
 
-
+//p (1+(3*2) +(($eax-$eax) +(*$eip-1**$eip)+(0x5--5+  *0X100005 - *0x100005) )*4)
 
 
 
