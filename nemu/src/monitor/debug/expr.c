@@ -23,7 +23,7 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
-  {"[0-9]+", num},       // decimal integer
+
   {"\\+", TK_plus},         // plus
   {"\\-", TK_sub},         // sub
   {"\\*", TK_mul},         // multiply
@@ -33,8 +33,9 @@ static struct rule {
   {"==", TK_EQ},         // equal
   {"!=", TK_NEQ},        // not equal   
   {"&&", TK_and},        
-  {"0[xX]{1}[0-9a-fA-F]+", hex},
+  {"0[xX][0-9a-fA-F]+", hex},
   {"\\$[a-zA-z]{3}", reg},
+  {"[0-9]+", num},       // decimal integer
   {"<=", TK_LEQ}
 
 };
