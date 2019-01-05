@@ -289,11 +289,11 @@ uint32_t expr(char *e, bool *success) {
       //printf("%d %s\n",tokens[i].type,tokens[i].str);
 	for (i = 0; i < nr_token; i ++) {
 
-  	if (tokens[i].type == '-' && (i == 0 || ( (tokens[i - 1].type != num)&&(tokens[i - 1].type != TK_rbr)&&(tokens[i - 1].type != hex)&&(tokens[i - 1].type != reg) ) ) ) {
+  	if (tokens[i].type == TK_sub && (i == 0 || ( (tokens[i - 1].type != num)&&(tokens[i - 1].type != TK_rbr)&&(tokens[i - 1].type != hex)&&(tokens[i - 1].type != reg) ) ) ) {
    	 tokens[i].type = TK_minus;
  	 }
 
-  	if (tokens[i].type == '*' && (i == 0 || ( (tokens[i - 1].type != num)&&(tokens[i - 1].type != TK_rbr)&&(tokens[i - 1].type != hex)&&(tokens[i - 1].type != reg) ) ) ) {
+  	if (tokens[i].type == TK_mul && (i == 0 || ( (tokens[i - 1].type != num)&&(tokens[i - 1].type != TK_rbr)&&(tokens[i - 1].type != hex)&&(tokens[i - 1].type != reg) ) ) ) {
    	 tokens[i].type = DEREF;
  	 }
 	}
