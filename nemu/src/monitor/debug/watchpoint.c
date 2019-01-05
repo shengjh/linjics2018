@@ -3,6 +3,9 @@
 
 #define NR_WP 32
 
+
+
+
 static WP wp_pool[NR_WP];
 static WP *head, *free_;
 
@@ -20,4 +23,6 @@ void init_wp_pool() {
 
 /* TODO: Implement the functionality of watchpoint */
 
+//WP* new_wp();
+//void free_wp(WP *wp);
 

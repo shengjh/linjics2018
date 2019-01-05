@@ -158,3 +158,5 @@ char *str;
     if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
   }
 }
+
+//p (1+(3*2) +(($eax-$eax) +(*$eip-1**$eip)+(0x5--5+  *0X100005 - *0x100005) )*4)
