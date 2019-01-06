@@ -57,7 +57,7 @@ void free_wp(WP* wp){
     printf("no used watchpoint\n");
   else
     {
-         for(b=head->next;b!=NULL;b=b->next)
+         for(b=head;b!=NULL;b=b->next)
 		{
 			if(b->next==wp)
  			  {
@@ -77,7 +77,7 @@ bool checkwp(){
   bool  success1 = true;
   bool* success  = &success1;
   if(head==NULL) return false;
-  for(b=head->next;b!=NULL;b=b->next)
+  for(b=head;b!=NULL;b=b->next)
     {
 	a = b->result;
         b->result = expr(b->s,success) ;
@@ -92,7 +92,7 @@ bool checkwp(){
 
 void print_wp(){
   WP* c;
-  for(c=head->next;c!=NULL;c=c->next)
+  for(c=head;c!=NULL;c=c->next)
     {
 	printf("num %d   string %s   result %d",c->NO,c->s,c->result);
     }
@@ -101,7 +101,7 @@ void print_wp(){
 
 WP* loc_wp(int a){
   WP* c;
-  for(c=head->next;c!=NULL;c=c->next)
+  for(c=head;c!=NULL;c=c->next)
      {
 	if(c->NO==a)
 	   return c;
