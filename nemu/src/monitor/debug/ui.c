@@ -8,7 +8,10 @@
 #include <readline/history.h>
 
 void cpu_exec(uint64_t);
-
+WP* new_wp();
+void free_wp(WP *wp);
+void print_wp();
+WP* loc_wp(int a);
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 char* rl_gets() {
   static char *line_read = NULL;
@@ -54,10 +57,32 @@ static int cmd_info(char *args) {
            }
         return 0;
       }
-  else
-    return 0;
+  if((args[0] == 'w')||(args[0] == 'W'))
+     {
+        print_wp();       
+        return 0;
+     }
+     return 0;
 }
 
+static int cmd_w(char *args) {
+  bool  success2 = true;
+  bool* success  = &success2;
+  WP* p;
+  p = new_wp();
+  strcpy(p->s,args);
+  p->result = expr(p->s,success);
+  return 0;
+}
+
+static int cmd_d(char *args) {
+  int a;
+  WP* b;
+  a = atoi(&args[0]);
+  b = loc_wp( a);
+  free_wp(b);
+  return 0;
+}
 static int cmd_x(char *args) {
   uint32_t a,b,i;
   a = strtoul(&args[0],NULL,10);
@@ -91,6 +116,8 @@ static struct {
   { "info", "List of integer registers and their contents",cmd_info},
   { "x", "Examine memory: x/FMT ADDRESS",cmd_x},
   { "p", "expression evaluation",cmd_p},
+  { "w", "set watchpoints",cmd_w},
+  { "d","free uesd watchpoints",cmd_d},
   /* TODO: Add more commands */
 
 };

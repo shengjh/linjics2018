@@ -7,6 +7,7 @@
  * You can modify this value as you want.
  */
 #define MAX_INSTR_TO_PRINT 10
+bool checkwp(); 
 
 int nemu_state = NEMU_STOP;
 
@@ -40,6 +41,12 @@ void cpu_exec(uint64_t n) {
 
 #ifdef DEBUG
     /* TODO: check watchpoints here. */
+    if(checkwp())
+	{
+		nemu_state = NEMU_STOP;
+                printf("Triggered the WatchPoint");
+		return;
+        }
 
 #endif
 
