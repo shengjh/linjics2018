@@ -41,11 +41,11 @@ void cpu_exec(uint64_t n) {
 
 #ifdef DEBUG
     /* TODO: check watchpoints here. */
-    if(checkwp())
-	{
-		nemu_state = NEMU_STOP;
+//    if(checkwp())
+//	{
+//		nemu_state = NEMU_STOP;
                
-        }
+//        }
 
 #endif
 
