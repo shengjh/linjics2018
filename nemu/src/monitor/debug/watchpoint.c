@@ -69,6 +69,7 @@ bool checkwp(){
   WP* b;
   bool  success1 = true;
   bool* success  = &success1;
+  if(head==NULL) return false;
   for(b=head->next;b!=NULL;b=b->next)
     {
 	a = b->result;
