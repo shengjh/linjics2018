@@ -18,7 +18,6 @@ void init_wp_pool() {
 
   head = NULL;
   free_ = wp_pool;
-  phead = head;
   
   
 }
@@ -32,14 +31,22 @@ WP* new_wp(){
 		assert(0);
 	}	
   else
-	{
-		pfree_ = free_;
-		phead->next = free_;
-		free_->next = NULL;
-		phead = free_; 
-		free_ =pfree_->next;
-                return phead;
-
+	{       
+		if(head==NULL)
+		   {
+		     head = free_;
+		     phead = head;
+		   }
+		else
+ 		{
+               		phead->next = free_; 
+			phead = free_;
+                	pfree_ = free_->next;
+			free_->next = NULL;
+			free_ =pfree_;
+                	
+		}
+		return phead;
 	}  
 
 }
