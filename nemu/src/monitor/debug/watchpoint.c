@@ -36,6 +36,7 @@ WP* new_wp(){
 		   {
 		     head = free_;
 		     phead = head;
+		     phead->next = NULL;
 		   }
 		else
  		{
