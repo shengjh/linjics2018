@@ -94,7 +94,7 @@ void print_wp(){
   WP* c;
   for(c=head;c!=NULL;c=c->next)
     {
-	printf("num %d   string %s   result %d",c->NO,c->s,c->result);
+	printf("num %d   string %s   result %d\n",c->NO,c->s,c->result);
     }
   return ;
 }
