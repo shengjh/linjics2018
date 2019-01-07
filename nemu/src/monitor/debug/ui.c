@@ -80,7 +80,7 @@ static int cmd_d(char *args) {
   int a;
   WP* b;
   a = atoi(&args[0]);
-  b = loc_wp( a);
+  b = loc_wp(a);
   free_wp(b);
   return 0;
 }
