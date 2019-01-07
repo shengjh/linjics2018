@@ -72,6 +72,7 @@ static int cmd_w(char *args) {
   p = new_wp();
   strcpy(p->s,args);
   p->result = expr(p->s,success);
+  
   return 0;
 }
 
