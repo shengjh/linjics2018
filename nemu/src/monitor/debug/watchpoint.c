@@ -34,9 +34,12 @@ WP* new_wp(){
 	{       
 		if(head==NULL)
 		   {
+		     pfree_ = free_->next;
 		     head = free_;
 		     phead = head;
 		     phead->next = NULL;
+		     free_ = pfree_;
+		     
 		   }
 		else
  		{
@@ -46,7 +49,7 @@ WP* new_wp(){
 			phead = free_;
 			phead->next = NULL;    
          
-			free_ =pfree_;
+			free_ = pfree_;
                 	
 		}
 		return phead;
