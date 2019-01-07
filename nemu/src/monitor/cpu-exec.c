@@ -66,7 +66,7 @@ void cpu_exec(uint64_t n) {
         return;
       }
 			else if(nemu_state == NEMU_STOP){
-				 printf("Triggered the WatchPoint");
+				 printf("Triggered the WatchPoint\n");
 				 return;			
 			}
     }
