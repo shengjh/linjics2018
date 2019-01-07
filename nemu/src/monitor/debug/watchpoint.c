@@ -41,6 +41,7 @@ WP* new_wp(){
  		{
                		phead->next = free_; 
 			phead = free_;
+			phead->next = NULL;
                 	pfree_ = free_->next;
 			free_->next = NULL;
 			free_ =pfree_;
