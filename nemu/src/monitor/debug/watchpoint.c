@@ -40,11 +40,12 @@ WP* new_wp(){
 		   }
 		else
  		{
+			pfree_ = free_->next;
+
                		phead->next = free_; 
 			phead = free_;
-			phead->next = NULL;
-                	pfree_ = free_->next;
-			free_->next = NULL;
+			phead->next = NULL;    
+         
 			free_ =pfree_;
                 	
 		}
