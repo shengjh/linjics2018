@@ -74,12 +74,20 @@ uint32_t pio_read_b(ioaddr_t addr) {
   return pio_read_common(addr, 1);
 }
 
+uint32_t pio_read(ioaddr_t addr, int len) {
+  return pio_read_common(addr, len);
+}
+
 void pio_write_l(ioaddr_t addr, uint32_t data) {
   pio_write_common(addr, data, 4);
 }
 
 void pio_write_w(ioaddr_t addr, uint32_t data) {
   pio_write_common(addr, data, 2);
+}
+
+void pio_write(ioaddr_t addr, uint32_t data, int len) {
+  pio_write_common(addr, data, len);
 }
 
 void pio_write_b(ioaddr_t addr, uint32_t data) {
